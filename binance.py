@@ -11,7 +11,6 @@ class Binance:
         self.data = np.zeros(shape=(60, 60), dtype=np.float64)
         self.averange = np.array([0]*60, dtype=np.float64)
         self.timeout = timeout
-        self.span = 0
         self.min = 0
         self.sec = 0
 
@@ -41,7 +40,6 @@ class Binance:
             self.data[self.min, self.sec] = float(price)
             await asyncio.sleep(self.timeout)
             if 0 <= self.sec <= 59:
-                self.span += 1
                 self.sec += 1
             if self.sec == 60:
                 self.averange[self.min] = np.average(self.data[self.min,:])
@@ -49,5 +47,4 @@ class Binance:
                 self.sec = 0
                 await self.drop_price()
             if self.min == 60:
-                self.min = 0
-                self.span = 0              
+                self.min = 0       
