@@ -15,11 +15,10 @@ class Binance:
         self.sec = 0
 
     async def drop_price(self, series):
-        if len(series) > 0:
-            series = pd.Series(series)
-            drop = ((series.pct_change(periods=(len(series)-1))).to_list())[-1] * 100
-            if drop <= -1:
-                print(f"Снижение цены на {abs(drop)}")
+        series = pd.Series(series)
+        drop = ((series.pct_change(periods=(len(series)-1))).to_list())[-1] * 100
+        if drop <= -1:
+            print(f"Снижение цены на {abs(drop)}")
 
     async def wb(self):
         async with self.session.ws_connect('wss://ws-api.binance.com:443/ws-api/v3', autoping=True) as ws:
@@ -43,11 +42,11 @@ class Binance:
             if 0 <= self.sec <= 59:
                 self.sec += 1
             if self.sec == 60:
-                series = self.averange[np.nonzero(self.averange)]
-                if len(self.averange) == len(series) and self.min != 59:
+                if len(self.averange) == len(self.averange[np.nonzero(self.averange)]) and self.min != 59:
                     self.averange = np.append(self.averange[1:],np.average(self.data[self.min,:]))
                 else:
                     self.averange[self.min] = np.average(self.data[self.min,:])
+                series = self.averange[np.nonzero(self.averange)]
                 self.min += 1
                 self.sec = 0
                 await self.drop_price(series=series)
