@@ -14,8 +14,8 @@ class Binance:
         self.min = 0
         self.sec = 0
 
-    async def drop_price(self):
-        series = pd.Series(self.averange[np.nonzero(self.averange)])
+    async def drop_price(self, series):
+        series = pd.Series(series)
         drop = ((series.pct_change(periods=(len(series)-1))).to_list())[-1] * 100
         if drop <= -1:
             print(f"Снижение цены на {abs(drop)}")
@@ -42,9 +42,13 @@ class Binance:
             if 0 <= self.sec <= 59:
                 self.sec += 1
             if self.sec == 60:
-                self.averange[self.min] = np.average(self.data[self.min,:])
+                series = self.averange[np.nonzero(self.averange)]
+                if len(self.averange) == len(series) and self.min != 59:
+                    self.averange = np.append(self.averange[1:],np.average(self.data[self.min,:]))
+                else:
+                    self.averange[self.min] = np.average(self.data[self.min,:])
                 self.min += 1
                 self.sec = 0
-                await self.drop_price()
+                await self.drop_price(series=series)
             if self.min == 60:
                 self.min = 0       
