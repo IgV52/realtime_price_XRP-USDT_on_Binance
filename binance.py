@@ -15,10 +15,11 @@ class Binance:
         self.sec = 0
 
     async def drop_price(self, series):
-        series = pd.Series(series)
-        drop = ((series.pct_change(periods=(len(series)-1))).to_list())[-1] * 100
-        if drop <= -1:
-            print(f"Снижение цены на {abs(drop)}")
+        if len(series) > 0:
+            series = pd.Series(series)
+            drop = ((series.pct_change(periods=(len(series)-1))).to_list())[-1] * 100
+            if drop <= -1:
+                print(f"Снижение цены на {abs(drop)}")
 
     async def wb(self):
         async with self.session.ws_connect('wss://ws-api.binance.com:443/ws-api/v3', autoping=True) as ws:
