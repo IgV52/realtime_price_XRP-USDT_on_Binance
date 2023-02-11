@@ -42,7 +42,7 @@ class Binance:
             if 0 <= self.sec <= 59:
                 self.sec += 1
             if self.sec == 60:
-                if len(self.averange) == len(self.averange[np.nonzero(self.averange)]) and self.min != 59:
+                if len(self.averange) == len(self.averange[np.nonzero(self.averange)]):
                     self.averange = np.append(self.averange[1:],np.average(self.data[self.min,:]))
                 else:
                     self.averange[self.min] = np.average(self.data[self.min,:])
